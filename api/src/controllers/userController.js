@@ -128,7 +128,21 @@ module.exports = {
 			.then(doc => {
 				
 				if (doc) {
-					res.status(200).json( doc );
+				
+					if( doc.type === 'doctor' ){
+
+						Doctor.findOne({ person: doc.person._id })
+								.exec()
+								.then( doctor => {
+									res.status(200).json( { user: doc, doctor: doctor } );
+								});
+
+					}else{
+
+						res.status(200).json( doc );	
+
+					}
+
 				}else{
 					res.status(404).json({message:'No valid entry found for provided ID'});
 				}
@@ -143,8 +157,23 @@ module.exports = {
 			.populate('person','dni name lastname gender birthdate cellphone telephone')
 			.exec()
 			.then(doc => {
+
 				if (doc) {
-					res.status(200).json( doc );
+					
+					if( doc.type === 'doctor' ){
+
+						Doctor.findOne({ person: doc.person._id })
+								.exec()
+								.then( doctor => {
+									res.status(200).json( { user: doc, doctor: doctor } );
+								});
+
+					}else{
+
+						res.status(200).json( doc );	
+
+					}
+
 				}else{
 					res.status(404).json({message:'No valid entry found for provided ID'});
 				}
@@ -184,14 +213,36 @@ module.exports = {
 					};
 
 					User.findOneAndUpdate(filter, userUpdate, { new: true })
-						.then( (doc) => {
+						.then( (userDoc) => {
 
-							Person.findOneAndUpdate({ _id: doc.person }, personUpdate, { new: true })
-							.then( (doc) => {
+							Person.findOneAndUpdate({ _id: userDoc.person }, personUpdate, { new: true })
+							.then( (personDoc) => {
 
-								res.status(200).json({
-									message: 'User updated.'
-								});
+
+								if( userDoc.type === 'doctor' ){
+
+									const doctorUpdate = {
+										worker_code: req.body.worker_code,
+										health_centers: req.body.health_centers,
+										specialty: req.body.specialty
+									};
+
+									Doctor.findOneAndUpdate({ person: userDoc.person }, doctorUpdate, { new: true })
+									.then( (doctorDoc) => {
+										
+										res.status(200).json({
+											message: 'User updated.'
+										});		
+
+									}).catch( err => errorHandler(res, err) );
+
+								} else {
+
+									res.status(200).json({
+										message: 'User updated.'
+									});
+
+								}
 
 							}).catch( err => errorHandler(res, err) );
 
@@ -222,14 +273,35 @@ module.exports = {
 			};
 
 			User.findOneAndUpdate(filter, userUpdate, { new: true })
-				.then( (doc) => {
+				.then( (userDoc) => {
 					
-					Person.findOneAndUpdate({ _id: doc.person }, personUpdate, { new: true })
-					.then( (doc) => {
+					Person.findOneAndUpdate({ _id: userDoc.person }, personUpdate, { new: true })
+					.then( (personDoc) => {
 
-						res.status(200).json({
-							message: 'User updated.'
-						});
+						if( userDoc.type === 'doctor' ){
+
+							const doctorUpdate = {
+								worker_code: req.body.worker_code,
+								health_centers: req.body.health_centers,
+								specialty: req.body.specialty
+							};
+
+							Doctor.findOneAndUpdate({ person: userDoc.person }, doctorUpdate, { new: true })
+							.then( (doctorDoc) => {
+								
+								res.status(200).json({
+									message: 'User updated.'
+								});		
+
+							}).catch( err => errorHandler(res, err) );
+
+						} else {
+
+							res.status(200).json({
+								message: 'User updated.'
+							});
+
+						}
 
 					}).catch( err => errorHandler(res, err) );
 
@@ -244,23 +316,54 @@ module.exports = {
 		const id = req.query.id;
 			
 		User.findById(id)
-			.select('_id')
+			.select('_id person type')
 			.exec()
-			.then(doc =>{
+			.then( doc =>{
+				
 				if (!doc) {
+
 					return res.status(404).json({
 						message: "User not found"
 					});
+				
 				}else{
-					User.deleteOne({_id: id})
+
+					User.deleteOne({ _id: id })
 						.exec()
-						.then(result => {
-							res.status(200).json({
-								message: 'User deleted',
-							});
+						.then( result => {
+
+							Person.deleteOne({ person: doc.person })
+								.exec()
+								.then( result1 => {
+
+									if( doc.type === 'doctor' ){
+
+										Doctor.deleteOne({ doc.person })
+												.exec()
+												.then( result3 =>{
+
+													res.status(200).json({
+														message: 'User deleted',
+													});
+
+												})
+												.catch( err => errorHandler(res, err) );
+
+									}else{
+
+										res.status(200).json({
+											message: 'User deleted',
+										});
+
+									}
+
+								})
+								.catch( err => errorHandler(res, err) );
+
 						})
 						.catch( err => errorHandler(res, err) );		
 				}
+
 			})
 			.catch( err => errorHandler(res, err) );
 
@@ -282,24 +385,26 @@ module.exports = {
 							});
 						}
 						else if (result) {
+							
 							const token = jwt.sign(
-							{
-								_id: user._id,
-								email: user.email,
-								type: user.type._id
-							},
-							//process.env.JWT_KEY,
-							'secret',
-							{
-								expiresIn: "1h"
-							}
+								{
+									_id: user._id,
+									email: user.email,
+									type: user.type
+								},
+								//process.env.JWT_KEY,
+								'secret',
+								{
+									expiresIn: "1h"
+								}
 							);
+
 							return res.status(200).json({
 								message: 'Auth succesful',
 								token: token,
 								person: user.person,
 								email: user.email,
-								type: user.type.name
+								type: user.type
 							});
 						}
 
@@ -310,6 +415,40 @@ module.exports = {
 			})
 			.catch( err => errorHandler(res, err) );
 	
+	},
+
+	findDoctorsByFilter: (req,res,next) => {
+
+		let filter = { type: 'doctor' };
+
+		if( req.body.hospital !== null && typeof req.body.hospital !== 'undefined' ){
+			filter.hospital = req.body.hospital;
+		}
+		if( req.body.specialty !== null && typeof req.body.specialty !== 'undefined' ){
+			filter.specialty = req.body.specialty;
+		}
+
+		User.find(filter)
+			.select('email type person')
+			.populate('person','name lastname')
+			.exec()
+			.then( docs => {
+				const response = {
+					count: docs.length,
+					records: docs.map( doc => {
+						return {
+								_id: doc._id,
+								email: doc.email,
+								type: doc.type,
+								person: doc.person
+							}
+					})
+				};
+
+				res.status(200).json(response);
+			})
+			.catch( err => errorHandler(res, err) );
+
 	}
 
 };
