@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Appointment = require('../models/appointment');
 const jwt = require('jsonwebtoken');
 
@@ -16,28 +16,48 @@ module.exports = {
 		Appointment.aggregate([
 				{
 					$lookup: {
-						from: 'people',
+						from: 'users',
 						localField: 'patient',
 						foreignField: '_id',
 						as: 'patient'
-					},
+					}
+				},{
 					$lookup: {
 						from: 'shifts',
 						localField: 'shift',
 						foreignField: '_id',
 						as: 'shift'
-					},
+					}
+				},{
 					$lookup: {
-						from: 'people',
+						from: 'doctors',
 						localField: 'shift.doctor',
 						foreignField: '_id',
+						as: 'doctor_data'
+					}
+				},{
+					$lookup: {
+						from: 'people',
+						localField: 'doctor_data.person',
+						foreignField: '_id',
 						as: 'doctor'
-					},
+					}
+				},{
 					$lookup: {
 						from: 'health_centers',
 						localField: 'shift.health_center',
 						foreignField: '_id',
 						as: 'health_center'
+
+					}
+				},{
+					$project: {
+						__v: 0,
+						'patient.password': 0,
+						'patient.__v': 0,
+						'shift.__v': 0,
+						'health_center.__v': 0,
+						'doctor.__v': 0
 					}
 				}
 			])
@@ -66,22 +86,22 @@ module.exports = {
 	create: (req,res,next) => {
 
 		Appointment.find({ shift: req.body.shift })
-			populate('shift')
+			.populate('shift')
 			.exec()
 			.then( records => {
-				if( records.length >= records[0].shift.patient_limit ) {
+
+				if( records.length > 0 && records.length >= records[0].shift.patient_limit ) {
 					return res.status(409).json({
 						message: 'Shift is full'
 					});
-				}
-				else{
+				} else {
 
 					const appointment = new Appointment({
 						_id: new mongoose.Types.ObjectId(),
 						patient: req.body.patient,
 						shift: req.body.shift,
 						state: 'pending',
-						order: req.body.shift
+						order: req.body.order
 					});
 
 					appointment.save().then( result => {
@@ -93,7 +113,7 @@ module.exports = {
 								patient: result.patient,
 								shift: result.shift,
 								state: result.state,
-								order: result.shift
+								order: result.order
 							}
 						});													
 
@@ -113,7 +133,7 @@ module.exports = {
 						_id: mongoose.Types.ObjectId(id)
 					},
 					$lookup: {
-						from: 'people',
+						from: 'users',
 						localField: 'patient',
 						foreignField: '_id',
 						as: 'patient'
@@ -160,17 +180,17 @@ module.exports = {
 				patient: req.body.patient,
 				shift: req.body.shift,
 				state: 'pending',
-				order: req.body.shift
+				order: req.body.order
 		};
 
 		Appointment.findOneAndUpdate(filter, appointmentUpdate, { new: true })
-		.then( (doc) => {
-			
-			res.status(200).json({
-				message: 'Appointment updated'
-			});		
+			.then( (doc) => {
+				
+				res.status(200).json({
+					message: 'Appointment updated'
+				});		
 
-		}).catch( err => errorHandler(res, err) );
+			}).catch( err => errorHandler(res, err) );
 
 	},
 	delete: (req,res,next) => {

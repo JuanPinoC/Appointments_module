@@ -1,0 +1,339 @@
+{
+	"info": {
+		"_postman_id": "56ee4079-0a39-4d3b-b0b0-6e5d4f202f01",
+		"name": "Appointments",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create ( Patient - Organizer - Admin )",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "dni",
+									"value": "88888889",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "Carlos",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "Delgado",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "male",
+									"type": "text"
+								},
+								{
+									"key": "birthdate",
+									"value": "2000-01-03",
+									"type": "text"
+								},
+								{
+									"key": "cellphone",
+									"value": "999999991",
+									"type": "text"
+								},
+								{
+									"key": "telephone",
+									"value": "888881",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "cdelgado@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "admin",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/user/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create ( Doctor )",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"dni\": 88888899,\r\n\t\"name\": \"Daniela\",\r\n\t\"lastname\": \"Ramirez\",\r\n\t\"gender\": \"female\",\r\n\t\"birthdate\": \"2000-01-04\",\r\n\t\"cellphone\": \"999999911\",\r\n\t\"telephone\": \"777777\",\r\n\t\"email\": \"dramirez@gmail.com\",\r\n\t\"password\": \"123456\",\r\n\t\"type\": \"doctor\",\r\n\t\"worker_code\": \"1111111111\",\r\n\t\"health_centers\": [\"5eb238051c122c137c7471c9\"],\r\n\t\"speciality\": \"5eb2309d7985431fa0b29994\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/user/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Specialties",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Oftalmología",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/specialty/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"specialty",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Health Center",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n\t\"ruc\": 81111111111,\n\t\"name\": \"Clinica Los Matasanos\",\n\t\"city\": \"Arequipa\",\n\t\"district\": \"Cerro Colorado\",\n\t\"specialties\": [ \"5eb2309d7985431fa0b29994\" ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/healthCenter/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"healthCenter",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Appointments",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"patient\": \"5eb229a6f0f9a8345409a1d5\",\r\n\t\"shift\": \"5eb2481fbdc82112401eea50\",\r\n\t\"order\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/appointment/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"appointment",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3001/appointment/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"appointment",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "List",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/appointment/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"appointment",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Access-Control-Allow-Headers",
+									"value": "Origin, X-Requested-Width, Content-Type, Accept, Authorization"
+								},
+								{
+									"key": "Access-Control-Allow-Methods",
+									"value": "PUT, POST, PATCH, DELETE, GET"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "817"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"331-WgbBL2roI1V93zu6bgPdbyGhs/o\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 06 May 2020 06:17:35 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"count\": 1,\n    \"records\": [\n        {\n            \"_id\": \"5eb24eee78bca01f1c7924fa\",\n            \"patient\": [\n                {\n                    \"_id\": \"5eb229a6f0f9a8345409a1d5\",\n                    \"type\": \"patient\",\n                    \"email\": \"apacheco@gmail.com\",\n                    \"person\": \"5eb229a6f0f9a8345409a1d4\"\n                }\n            ],\n            \"shift\": [\n                {\n                    \"_id\": \"5eb2481fbdc82112401eea50\",\n                    \"health_center\": \"5eb238051c122c137c7471c9\",\n                    \"doctor\": \"5eb239b1991b362edc96f32c\",\n                    \"start\": \"2020-05-18T08:00:00.000Z\",\n                    \"end\": \"2020-05-18T12:00:00.000Z\",\n                    \"patient_limit\": 4\n                }\n            ],\n            \"state\": \"pending\",\n            \"order\": 2,\n            \"doctor\": [\n                {\n                    \"_id\": \"5eb239b1991b362edc96f32a\",\n                    \"gender\": \"female\",\n                    \"dni\": 88888899,\n                    \"name\": \"Daniela\",\n                    \"lastname\": \"Ramirez\",\n                    \"birthdate\": \"2000-01-04T00:00:00.000Z\",\n                    \"cellphone\": \"999999911\",\n                    \"telephone\": \"777777\"\n                }\n            ],\n            \"health_center\": [\n                {\n                    \"_id\": \"5eb238051c122c137c7471c9\",\n                    \"specialties\": [\n                        \"5eb2309d7985431fa0b29994\"\n                    ],\n                    \"ruc\": 81111111111,\n                    \"name\": \"Clinica Los Matasanos\",\n                    \"city\": \"Arequipa\",\n                    \"district\": \"Cerro Colorado\"\n                }\n            ]\n        }\n    ]\n}"
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Shifts",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"shifts\": [\n\t\t\t\t{\n\t\t\t\t\t\"health_center\": \"5eb238051c122c137c7471c9\",\n\t\t\t\t\t\"doctor\": \"5eb239b1991b362edc96f32c\",\n\t\t\t\t\t\"start\": \"2020-05-18T08:00:00Z\",\n\t\t\t\t\t\"end\": \"2020-05-18T12:00:00Z\",\n\t\t\t\t\t\"patient_limit\": 4\n\t\t\t\t}\n\t\t\t]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/shift/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"shift",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

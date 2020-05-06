@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Shift = require('../models/shift');
 const jwt = require('jsonwebtoken');
 
@@ -41,6 +41,8 @@ module.exports = {
 
 		const shifts = req.body.shifts;
 
+
+
 		let shiftPromises = shifts.map( (item, index) => {
 
 			let itemPromise = new Promise(
@@ -50,8 +52,8 @@ module.exports = {
 													_id: new mongoose.Types.ObjectId(),
 													health_center: item.health_center,
 													doctor: item.doctor,
-													start: item.start,
-													end: item.end,
+													start: new Date(item.start),
+													end: new Date(item.end),
 													patient_limit: item.patient_limit
 												});
 
@@ -107,8 +109,8 @@ module.exports = {
 		const shiftUpdate = {
 			health_center: item.health_center,
 			doctor: item.doctor,
-			start: item.start,
-			end: item.end,
+			start: new Date(item.start),
+			end: new Date(item.end),
 			patient_limit: item.patient_limit
 		};
 

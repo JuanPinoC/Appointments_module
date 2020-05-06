@@ -22,6 +22,14 @@ Replace count() with countDocuments(), unless you want to count how many documen
  in the whole collection (no filter). In the latter case, use estimatedDocumentCount().
 */
 
+/*
+
+mongodump -d <database_name> -o <directory_backup>
+
+mongorestore -d <database_name> <directory_backup>
+
+*/
+
 mongoose.connect('mongodb://localhost:27017/appointments_module');
 mongoose.Promise = global.Promise;
 
@@ -55,7 +63,7 @@ app.options('/*', (req, res, next) => {
 app.use('/user', userRoutes);
 app.use('/appointment', appointmentRoutes);
 app.use('/healthCenter', healthCenterRoutes);
-app.use('/shiftRoutes', shiftRoutes);
+app.use('/shift', shiftRoutes);
 app.use('/specialty', specialtyRoutes);
 
 app.use( (req, res, next) => {

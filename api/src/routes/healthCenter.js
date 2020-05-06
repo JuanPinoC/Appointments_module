@@ -6,7 +6,8 @@ const checkAuth = require('../middlewares/check-auth');
 const accessRules = require('../middlewares/access-rules');
 
 
-router.post('/create', checkAuth, accessRules, HealthCenter.create);
+router.post('/create', HealthCenter.create);
+//router.post('/create', checkAuth, accessRules, HealthCenter.create);
 router.get('/find', checkAuth, accessRules, HealthCenter.find);
 router.post('/update', checkAuth, accessRules, HealthCenter.update);
 router.get('/delete', checkAuth, accessRules, HealthCenter.delete);

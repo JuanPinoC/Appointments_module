@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const HealthCenter = require('../models/healthCenter');
 const jwt = require('jsonwebtoken');
 
@@ -48,7 +48,6 @@ module.exports = {
 					});
 				}
 				else{
-
 					const center = new HealthCenter({
 						_id: new mongoose.Types.ObjectId(),
 						ruc: req.body.ruc,
@@ -65,14 +64,14 @@ module.exports = {
 							createdRecord: {
 								_id: resultCenter._id,
 								ruc: resultCenter.ruc,
-								name: resultUser.name
+								name: resultCenter.name
 							}
 						});													
 
 					}).catch( err => errorHandler(res, err) );
 				}
 			}).catch( err => errorHandler(res, err) );
-			
+
 	},
 	
 	find: (req,res,next) => {

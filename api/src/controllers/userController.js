@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const Person = require('../models/person');
 const Doctor = require('../models/doctor');
@@ -75,7 +75,7 @@ module.exports = {
 									const user = new User({
 										_id: new mongoose.Types.ObjectId(),
 										email: req.body.email,
-										password: hash
+										password: hash,
 										type: req.body.type,
 										person: resultPerson._id
 									});
@@ -85,6 +85,7 @@ module.exports = {
 											
 											if( req.body.type === 'doctor' ){
 												const doctor = new Doctor({
+													_id: new mongoose.Types.ObjectId(),
 													worker_code: req.body.worker_code,
 													health_centers: req.body.health_centers,
 													specialty: req.body.specialty,
@@ -103,6 +104,17 @@ module.exports = {
 													});													
 
 												}).catch( err => errorHandler(res, err) );
+
+											} else {
+
+												res.status(201).json({
+													message: 'Succesfully created',
+													createdUser: {
+														_id: resultUser._id,
+														email: resultUser.email,
+														password: resultUser.password
+													}
+												});
 
 											}
 
@@ -338,7 +350,7 @@ module.exports = {
 
 									if( doc.type === 'doctor' ){
 
-										Doctor.deleteOne({ doc.person })
+										Doctor.deleteOne({ person: doc.person })
 												.exec()
 												.then( result3 =>{
 

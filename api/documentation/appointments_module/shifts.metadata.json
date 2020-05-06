@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"appointments_module.shifts"}],"uuid":"69e65445308c4b5fac561d8a00f58d8c"}
